@@ -375,6 +375,7 @@ static int mod_sslhaf_pre_conn(conn_rec *c, void *csd) {
         &mod_sslhaf_alloc,
         &mod_sslhaf_free,
         &mod_sslhaf_snprintf,
+        NULL,
         &mod_sslhaf_log);
 
     if (cfg == NULL)

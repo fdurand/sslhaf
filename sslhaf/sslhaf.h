@@ -310,8 +310,11 @@ sslhaf_cfg_t *sslhaf_cfg_create(
     void *user_data,
     void* (*alloc_fn)(struct sslhaf_cfg_t *cfg, size_t size),
     void (*free_fn)(struct sslhaf_cfg_t *cfg, void *obj),
-    char* (*snprintf_fn)(struct sslhaf_cfg_t *cfg,char *msgbuf, size_t len, const char *format, ...),
+    char* (*snprintf_fn)(struct sslhaf_cfg_t *cfg,
+            char *msgbuf, size_t len, const char *format, ...),
+    void (*free_snprintf_fn)(struct sslhaf_cfg_t *cfg, void *buf),
     void (*log_fn)(struct sslhaf_cfg_t *cfg, const char *format, ...));
+
 
 /**
  * Retrieve configuration flag indicating whether printable text copies of
