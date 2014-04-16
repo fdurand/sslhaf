@@ -376,6 +376,7 @@ static int mod_sslhaf_pre_conn(conn_rec *c, void *csd) {
         &mod_sslhaf_free,
         &mod_sslhaf_snprintf,
         &mod_sslhaf_log);
+
     if (cfg == NULL)
         return OK;
 
@@ -428,7 +429,7 @@ static int mod_sslhaf_post_request(request_rec *r) {
         // Expose extension data
         char *extensions_len = apr_psprintf(r->pool, "%d", cfg->extensions_len);
         apr_table_setn(r->subprocess_env, "SSLHAF_EXTENSIONS_LEN", extensions_len);
-        apr_table_setn(r->subprocess_env, "SSLHAF_EXTENSIONS", cfg->extensions);
+        apr_table_setn(r->subprocess_env, "SSLHAF_EXTENSIONS", cfg->textensions);
 
         // Keep track of how many requests there were
         cfg->request_counter++;
@@ -451,7 +452,7 @@ static int mod_sslhaf_post_request(request_rec *r) {
         #endif
 
         if (cfg->tclient_hello != NULL) {
-            apr_table_setn(r->subprocess_env, "SSLHAF_RAW", tcfg->client_hello);
+            apr_table_setn(r->subprocess_env, "SSLHAF_RAW", cfg->tclient_hello);
         } else {
             apr_table_setn(r->subprocess_env, "SSLHAF_RAW", "-");
         }
