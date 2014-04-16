@@ -55,8 +55,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
  * To compile and install the module, as root do this:
- *
- *     # apxs -cia -Isslhaf/ -Lsslhaf/ .libs/ mod_sslhaf.c
+ *     # autogen.sh
+ *     # ./configure
+ *     # make
+ *     # make install
+ *     # apxs -cia -lsslhaf -Isslhaf/ -Lsslhaf/ .libs/ mod_sslhaf.c
  *
  * The above script will try to add a LoadModule statement to your
  * configuration file but it will fail if it can't find at least one
