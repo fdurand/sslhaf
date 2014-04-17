@@ -381,7 +381,8 @@ static int sslhaf_decode_packet_v2(sslhaf_cfg_t *cfg) {
     }
     memset(cfg->suites, 0,
         sizeof(sslhaf_suite_t*) * cfg->suites_len);
-    q = cfg->alloc_fn(cfg, (cfg->suites_len * 7));
+
+    q = malloc(sizeof(char) * (cfg->suites_len + 1));
 
     // Extract cipher suites; each suite consists of 3 bytes.
     for (obj_count = 0; obj_count < cfg->suites_len; ++obj_count) {
@@ -391,8 +392,7 @@ static int sslhaf_decode_packet_v2(sslhaf_cfg_t *cfg) {
             // an additional byte for a comma.  The last entry has no comma,
             // instead it has a NUL byte.
             if (cfg->tsuites == NULL) {
-               // cfg->tsuites = cfg->alloc_fn(cfg, (cfg->suites_len * 7));
-                cfg->tsuites = q;
+                cfg->tsuites = cfg->alloc_fn(cfg, (cfg->suites_len * 7));
                 if (cfg->tsuites == NULL) {
                     SSLHAF_RETURN_ERROR(cfg, SSLHAF_NOMEM);
                 }
@@ -610,18 +610,17 @@ static int sslhaf_decode_packet_v3_handshake(sslhaf_cfg_t *cfg) {
         memset(cfg->suites, 0,
             sizeof(sslhaf_suite_t*) * cfg->suites_len);
 
+        q = malloc(sizeof(char) * (cfg->suites_len + 1));
         // Extract cipher suites; each suite consists of 2 bytes
         for (uint16_t suite_count = 0; suite_count < cfg->suites_len;
                 suite_count++) {
-            q =  cfg->alloc_fn(cfg, (cfg->suites_len * 5));
             if (cfg->do_create_strings) {
                 if (cfg->tsuites == NULL) {
                     // Create a list of suites as text, for logging. Each 2-byte
                     // suite can consume up to 4 bytes (in hexadecimal form) with
                     // an additional byte for a comma.  The last entry has no comma,
                     // instead it has a NUL byte.
-                    cfg->tsuites = q;
-                    //cfg->tsuites = cfg->alloc_fn(cfg, (cfg->suites_len * 5));
+                    cfg->tsuites = cfg->alloc_fn(cfg, (cfg->suites_len * 5));
                     if (cfg->tsuites == NULL) {
                         SSLHAF_RETURN_ERROR(cfg, SSLHAF_NOMEM);
                     }
@@ -666,6 +665,8 @@ static int sslhaf_decode_packet_v3_handshake(sslhaf_cfg_t *cfg) {
         cfg->compression_len = section_to_go / 1; // 1 byte per compression method
         cfg->compression_methods = cfg->alloc_fn(cfg,
             sizeof(sslhaf_compression_method_t*) * cfg->compression_len);
+
+        q = malloc(sizeof(char) * (cfg->compression_len + 1));
         if (cfg->compression_methods == NULL) {
             SSLHAF_RETURN_ERROR(cfg, SSLHAF_NOMEM);
         }
@@ -674,15 +675,13 @@ static int sslhaf_decode_packet_v3_handshake(sslhaf_cfg_t *cfg) {
 
         for (uint16_t comp_count = 0; comp_count < cfg->compression_len;
                 comp_count++) {
-            q = cfg->alloc_fn(cfg, (cfg->compression_len * 3));
             if (cfg->do_create_strings) {
                 if (cfg->tcompmethods == NULL) {
                     // Create a list of compression methods as text, for logging. Each 1-byte
                     // method can consume up to 2 bytes (in hexadecimal form) with
                     // an additional byte for a comma.  The last entry has no comma,
                     // instead it has a NUL byte.
-                    cfg->tcompmethods = q;
-                    //cfg->tcompmethods = cfg->alloc_fn(cfg, (cfg->compression_len * 3));
+                    cfg->tcompmethods = cfg->alloc_fn(cfg, (cfg->compression_len * 3));
                     if (cfg->tcompmethods == NULL) {
                         SSLHAF_RETURN_ERROR(cfg, SSLHAF_NOMEM);
                     }
@@ -769,18 +768,18 @@ static int sslhaf_decode_packet_v3_handshake(sslhaf_cfg_t *cfg) {
         memset(cfg->extensions, 0,
             sizeof(sslhaf_extension_t*) * cfg->extensions_len);
 
+        q = malloc(sizeof(char) * (cfg->extensions_len + 1));
         for (uint16_t ext_count = 0; ext_count < cfg->extensions_len;
                 ext_count++) {
             uint16_t extension_type;
-            q = cfg->alloc_fn(cfg, (cfg->extensions_len * 5));
+
             if (cfg->do_create_strings) {
                 // Create a list of compression methods as text, for logging. Each 3-byte
                 // method can consume up to 4 bytes (in hexadecimal form) with
                 // an additional byte for a comma.  The last entry has no comma,
                 // instead it has a NUL byte.
                 if (cfg->textensions == NULL) {
-                    cfg->textensions = q;
-                    //cfg->textensions = cfg->alloc_fn(cfg, (cfg->extensions_len * 5));
+                    cfg->textensions = cfg->alloc_fn(cfg, (cfg->extensions_len * 5));
                     if (cfg->textensions == NULL) {
                         SSLHAF_RETURN_ERROR(cfg, SSLHAF_NOMEM);
                     }
