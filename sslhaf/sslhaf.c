@@ -46,7 +46,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 
 
-
 #if defined(__x86_64__)
 # define SSLHAF_SIZE_T_FMT                                     "lu"
 #else
@@ -382,7 +381,7 @@ static int sslhaf_decode_packet_v2(sslhaf_cfg_t *cfg) {
     memset(cfg->suites, 0,
         sizeof(sslhaf_suite_t*) * cfg->suites_len);
 
-    q = malloc(sizeof(char) * (cfg->suites_len + 1));
+    q = cfg->alloc_fn(cfg, (section_to_go * 7) + 1);
 
     // Extract cipher suites; each suite consists of 3 bytes.
     for (obj_count = 0; obj_count < cfg->suites_len; ++obj_count) {
@@ -610,7 +609,7 @@ static int sslhaf_decode_packet_v3_handshake(sslhaf_cfg_t *cfg) {
         memset(cfg->suites, 0,
             sizeof(sslhaf_suite_t*) * cfg->suites_len);
 
-        q = malloc(sizeof(char) * (cfg->suites_len + 1));
+        q = cfg->alloc_fn(cfg, (section_to_go * 7) + 1);
         // Extract cipher suites; each suite consists of 2 bytes
         for (uint16_t suite_count = 0; suite_count < cfg->suites_len;
                 suite_count++) {
@@ -666,7 +665,7 @@ static int sslhaf_decode_packet_v3_handshake(sslhaf_cfg_t *cfg) {
         cfg->compression_methods = cfg->alloc_fn(cfg,
             sizeof(sslhaf_compression_method_t*) * cfg->compression_len);
 
-        q = malloc(sizeof(char) * (cfg->compression_len + 1));
+        q = cfg->alloc_fn(cfg, (section_to_go * 7) + 1);
         if (cfg->compression_methods == NULL) {
             SSLHAF_RETURN_ERROR(cfg, SSLHAF_NOMEM);
         }
@@ -768,7 +767,7 @@ static int sslhaf_decode_packet_v3_handshake(sslhaf_cfg_t *cfg) {
         memset(cfg->extensions, 0,
             sizeof(sslhaf_extension_t*) * cfg->extensions_len);
 
-        q = malloc(sizeof(char) * (cfg->extensions_len + 1));
+        q = cfg->alloc_fn(cfg, (section_to_go * 7) + 1);
         for (uint16_t ext_count = 0; ext_count < cfg->extensions_len;
                 ext_count++) {
             uint16_t extension_type;
